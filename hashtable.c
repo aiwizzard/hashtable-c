@@ -68,8 +68,10 @@ bool hash_table_insert(hash_table *ht, const char *key, void *obj) {
     // Create a new entry
     entry *e = malloc(sizeof(*e));
     e->object = obj;
-    e->key = malloc(strlen(key)+1);
-    strcpy(e->key, key);
+    
+    // e->key = malloc(strlen(key)+1);
+    // strcpy(e->key, key);
+    e->key = strdup(key)
 
     // Insert entry
     e->next = ht->elements[index];
