@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
     uint32_t num_guesses = atol(argv[2]);
 
     const int tablesize = (1<<20);
-    hash_table *table = hash_table_create(tablesize, hash);
+    hash_table *table = hash_table_create(tablesize, hash, NULL);
     
     FILE *fp = fopen(filename, "r");
     char *buffer[MAX_LINE];

@@ -13,6 +13,7 @@ typedef struct entry {
 struct _hash_table {
     uint32_t size;
     hashfunction *hash;
+    cleanupfunction *cleanup;
     entry **elements;
 };
 
@@ -23,10 +24,18 @@ static size_t hash_table_index(hash_table *ht, const char *key) {
 }
 
 
-hash_table *hash_table_create(uint32_t size, hashfunction *hf) {
+// Pass in NULL cf for default free behavior
+hash_table *hash_table_create(uint32_t size, hashfunction *hf, cleanupfunction
+        *cf) {
     hash_table *ht = malloc(sizeof(*ht));
     ht->size = size;
     ht->hash = hf;
+    if (cf) {
+        ht->cleanup = cf;
+    } else {
+        ht->cleanup = free;
+    }
+        
     // Note that calloc zeros out the memory
     ht->elements = calloc(sizeof(entry*), ht->size);
     return ht;
@@ -40,7 +49,7 @@ void hash_table_destroy(hash_table *ht) {
              entry *tmp = ht->elements[i];
              ht->elements[i] = ht->elements[i]->next;
              free(tmp->key);
-             free(tmp->object);
+             ht->cleanup(tmp->object);
              free(tmp);
          }
      }
