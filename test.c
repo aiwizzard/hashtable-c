@@ -1,14 +1,12 @@
-
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
 #include "hashtable.h"
+#include <stddef.h>
 #include <string.h>
 #include <stdio.h>
 
-
 #define MAX_LINE 4096
-uint64_t hash(char *name, size_t length) {
+
+
+uint64_t hash(const char *name, size_t length) {
     uint64_t hash_value = 0;
     for (int i=0; i < length; i++) {
         hash_value += name[i];
@@ -38,7 +36,7 @@ int main(int argc, char **argv) {
     hash_table *table = hash_table_create(tablesize, hash, NULL);
     
     FILE *fp = fopen(filename, "r");
-    char *buffer[MAX_LINE];
+    char buffer[MAX_LINE];
     uint32_t numwords = 0;
     while (!feof(fp) && fgets(buffer, MAX_LINE, fp) != NULL) {
          buffer[strcspn(buffer, "\n\r")] = 0;
