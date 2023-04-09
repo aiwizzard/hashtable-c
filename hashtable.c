@@ -71,7 +71,7 @@ bool hash_table_insert(hash_table *ht, const char *key, void *obj) {
     
     // e->key = malloc(strlen(key)+1);
     // strcpy(e->key, key);
-    e->key = strdup(key)
+    e->key = strdup(key);
 
     // Insert entry
     e->next = ht->elements[index];
