@@ -34,7 +34,17 @@ hash_table *hash_table_create(uint32_t size, hashfunction *hf) {
 
 
 void hash_table_destroy(hash_table *ht) {
-     // what to do about individual elements
+     // Clean up individual elements
+     for (uint32_t i = 0; i < ht->size; i++) {
+         while (ht->elements[i]) {
+             entry *tmp = ht->elements[i];
+             ht->elements[i] = ht->elements[i]->next;
+             free(tmp->key);
+             free(tmp->object);
+             free(tmp);
+         }
+     }
+
      free(ht->elements);
      free(ht);
 }
