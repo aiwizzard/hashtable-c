@@ -10,11 +10,11 @@ typedef struct entry {
     struct entry *next;
 } entry;
 
-typedef struct _hash_table {
+struct _hash_table {
     uint32_t size;
     hashfunction *hash;
     entry **elements;
-} hash_table;
+};
 
 
 static size_t hash_table_index(hash_table *ht, const char *key) {
