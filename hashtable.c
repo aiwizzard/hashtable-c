@@ -1,4 +1,5 @@
 #include "hashtable.h"
+#include <stdint.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -13,6 +14,7 @@ struct _hash_table {
     hashfunction *hash;
     cleanupfunction *cleanup;
     entry **elements;
+    uint64_t collisions;
 };
 
 
@@ -28,6 +30,7 @@ hash_table *hash_table_create(uint32_t size, hashfunction *hf, cleanupfunction
     hash_table *ht = malloc(sizeof(*ht));
     ht->size = size;
     ht->hash = hf;
+    ht->collisions = 0;
     if (cf) {
         ht->cleanup = cf;
     } else {
@@ -91,6 +94,9 @@ bool hash_table_insert(hash_table *ht, const char *key, void *obj) {
     e->key = strdup(key);
 
     // Insert entry
+    if (ht->elements[index]) {
+        ht->collisions++;
+    }
     e->next = ht->elements[index];
     ht->elements[index] = e;
     return true;
@@ -130,4 +136,8 @@ void *hash_table_delete(hash_table *ht, const char *key) {
     void *result = tmp->object;
     free(tmp);
     return result;
+}
+
+uint64_t hash_table_collisions(hash_table *ht) {
+    return ht->collisions;
 }

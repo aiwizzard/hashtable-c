@@ -6,14 +6,36 @@
 #define MAX_LINE 4096
 
 
-uint64_t hash(const char *name, size_t length) {
+uint64_t hash(const char *text, size_t length) {
     uint64_t hash_value = 0;
     for (int i=0; i < length; i++) {
-        hash_value += name[i];
-        hash_value = hash_value * name[i];
+        hash_value += text[i];
+        hash_value = hash_value * text[i];
     }
     return hash_value;
 }
+
+#define FNV_PRIME 0x10000001b3
+#define FNV_OFFSET 0xcbf29ce48422325UL
+
+uint64_t hash_hnv1(const char *text, size_t length) {
+    uint64_t hash_value = FNV_OFFSET;
+    for (int i=0; i < length; i++) {
+        hash_value *= FNV_PRIME;
+        hash_value ^= text[i];
+    }
+    return hash_value;
+}
+
+uint64_t hash_hnv1a(const char *text, size_t length) {
+    uint64_t hash_value = FNV_OFFSET;
+    for (int i=0; i < length; i++) {
+        hash_value ^= text[i];
+        hash_value *= FNV_PRIME;
+    }
+    return hash_value;
+}
+
 
 void generate_random_word(char * buffer, size_t length) {
     for (size_t i=0; i<length-1; i++) {
@@ -47,6 +69,7 @@ int main(int argc, char **argv) {
     }
     fclose(fp);
     printf("Loaded %d words into the table.\n", numwords);
+    printf("\t ... with %lu collisions\n", hash_table_collisions(table));
 
     // hash_table_print(table);
     
